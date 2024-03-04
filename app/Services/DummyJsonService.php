@@ -43,6 +43,20 @@ class DummyJsonService
         return $this->send($endpoint);
     }
 
+    public function updatePost(int $id, array $data)
+    {
+        $endpoint = sprintf('/posts/%d', $id);
+
+        return $this->send($endpoint, 'PUT', $data);
+    }
+
+    public function deletePost(int $id)
+    {
+        $endpoint = sprintf('/posts/%d', $id);
+
+        return $this->send($endpoint, 'DELETE');
+    }
+
     public function send(string $endpoint, string $method = 'GET', array $data = [])
     {
         if (in_array($method, ['GET', 'DELETE'])) {

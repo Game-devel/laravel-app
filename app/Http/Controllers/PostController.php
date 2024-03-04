@@ -113,7 +113,10 @@ class PostController extends Controller
             return redirect()->route('posts.index')->with('error', 'You are not authorized to update this post');
         }
 
-        $post->save();
+        $dummyPost = $this->dummyJsonService->updatePost(rand(0, 150), $request->all());
+        if (empty($dummyPost)) {
+            return redirect()->route('posts.index')->with('error', 'Dummy Post not updated');
+        }
 
         return redirect()->route('posts.index')->with('success', 'Post updated successfully');
     }
@@ -129,6 +132,10 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         if ($post->user_id !== Auth::id()) { // Проверяем, что пользователь является автором поста
             return redirect()->route('posts.index')->with('error', 'You are not authorized to delete this post');
+        }
+        $dummyPost = $this->dummyJsonService->deletePost(rand(0, 150));
+        if (empty($dummyPost)) {
+            return redirect()->route('posts.index')->with('error', 'Dummy Post not deleted');
         }
 
         $post->delete();
