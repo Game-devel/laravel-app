@@ -22,12 +22,14 @@
                     <td>{{ $post->user->name }}</td>
                     <td>{{ substr($post->body, 0, 128) }}</td>
                     <td>
-                        <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-info">Edit</a>
-                        <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
+                        @if($post->user_id === auth()->id())
+                            <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-info">Edit</a>
+                            <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach
