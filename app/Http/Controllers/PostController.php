@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\post\Post;
 use App\Models\post\requests\PostRequest;
+use App\Services\DummyJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -12,6 +13,14 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+
+    protected $dummyJsonService;
+
+    public function __construct(DummyJsonService $dummyJsonService)
+    {
+        $this->dummyJsonService = $dummyJsonService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,6 +29,11 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::with('user')->paginate(10);
+        $dummyPost = $this->dummyJsonService->getPostById(rand(0, 150));
+        foreach ($posts as $post) {
+            $post->title = $dummyPost['title'];
+            $post->body = $dummyPost['body'];
+        }
         return view('posts.index', compact('posts'));
     }
 
@@ -41,8 +55,9 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-        $post = new Post();
-        $post->user_id = Auth::id();
+        // dummyJson always get 151 id, not create
+        $dummyPost = $this->dummyJsonService->createPost($request->all());
+        $post = Post::create(Auth::id(), $dummyPost['id']);
         $post->save();
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully');
@@ -57,6 +72,10 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
+        // Get random dummyPost (0, 150)
+        $dummyPost = $this->dummyJsonService->getPostById(rand(0, 150));
+        $post->title = $dummyPost['title'];
+        $post->body = $dummyPost['body'];
         return view('posts.show', compact('post'));
     }
 
@@ -72,6 +91,10 @@ class PostController extends Controller
         if ($post->user_id !== Auth::id()) {
             return redirect()->route('posts.index')->with('error', 'You are not authorized to edit this post');
         }
+
+        $dummyPost = $this->dummyJsonService->getPostById(rand(0, 150));
+        $post->title = $dummyPost['title'];
+        $post->body = $dummyPost['body'];
 
         return view('posts.edit', compact('post'));
     }

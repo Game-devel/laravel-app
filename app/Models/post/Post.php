@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property int $dummy_post_id
+ * @property string $title
+ * @property string $body
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at

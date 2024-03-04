@@ -19,6 +19,9 @@
                 <div style="margin-top: 5px;" class="alert alert-danger">{{ $message }}</div>
                 @enderror
             </div>
+
+            <input type="hidden" name="userId" value="{{ auth()->id() }}">
+
             <br>
             <button type="submit" class="btn btn-primary">Create</button>
         </form>

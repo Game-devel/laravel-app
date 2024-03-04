@@ -8,9 +8,9 @@
             <thead>
             <tr>
                 <th>ID</th>
-                {{--                <th>Title</th>--}}
+                <th>Title</th>
                 <th>Author</th>
-                {{--                <th>Description</th>--}}
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -18,9 +18,9 @@
             @foreach ($posts as $post)
                 <tr>
                     <td>{{ $post->id }}</td>
-                    {{--                    <td>{{ $post->title }}</td>--}}
+                    <td>{{ $post->title }}</td>
                     <td>{{ $post->user->name }}</td>
-                    {{--                    <td>{{ substr($post->body, 0, 128) }}</td>--}}
+                    <td>{{ substr($post->body, 0, 128) }}</td>
                     <td>
                         <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-info">Edit</a>
                         <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
