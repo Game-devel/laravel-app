@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\post\Post;
+use App\Models\post\repositories\PostRepository;
 use App\Models\post\requests\PostRequest;
 use App\Services\DummyJsonService;
 use Illuminate\Contracts\Foundation\Application;
@@ -15,10 +16,12 @@ class PostController extends Controller
 {
 
     protected $dummyJsonService;
+    protected $postRepository;
 
-    public function __construct(DummyJsonService $dummyJsonService)
+    public function __construct(DummyJsonService $dummyJsonService, PostRepository $postRepository)
     {
         $this->dummyJsonService = $dummyJsonService;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -71,7 +74,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->findOrFail($id);
         // Get random dummyPost (0, 150)
         $dummyPost = $this->dummyJsonService->getPostById(rand(0, 150));
         $post->title = $dummyPost['title'];
@@ -87,7 +90,7 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->findOrFail($id);
         if ($post->user_id !== Auth::id()) {
             return redirect()->route('posts.index')->with('error', 'You are not authorized to edit this post');
         }
@@ -108,7 +111,7 @@ class PostController extends Controller
      */
     public function update(PostRequest $request, $id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->findOrFail($id);
         if ($post->user_id !== Auth::id()) { // Проверяем, что пользователь является автором поста
             return redirect()->route('posts.index')->with('error', 'You are not authorized to update this post');
         }
@@ -129,7 +132,7 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+        $post = $this->postRepository->findOrFail($id);
         if ($post->user_id !== Auth::id()) { // Проверяем, что пользователь является автором поста
             return redirect()->route('posts.index')->with('error', 'You are not authorized to delete this post');
         }
@@ -138,7 +141,7 @@ class PostController extends Controller
             return redirect()->route('posts.index')->with('error', 'Dummy Post not deleted');
         }
 
-        $post->delete();
+        $this->postRepository->delete($post);
 
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
     }
