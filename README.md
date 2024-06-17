@@ -10,16 +10,18 @@
 
 1. Register domain in /etc/host  `127.0.0.1 laravel.local`
 2. run `cp .env.example .env`
-3. run `docker-compose up -d --build`
-4. Open docker console
-   * run `docker ps -a` to show container name. ex: laravel-app-laravel.test-1
-   * run `docker exec -it laravel-app-laravel.test-1 bash`
-   * run `composer install`
-   * run `exit`
-5. run `alias sail='bash vendor/bin/sail'`
-6. recreate containers run `sail down` and `sail up -d`
+3. run `docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs`
+4. run `alias sail='bash vendor/bin/sail'`
+5. run to build `sail build`
+6. run to up containers `sail up -d`
 7. run `sail artisan key:generate`
 8. run `sail artisan migrate`
+9. open http://laravel.local:8096
 
 
 ### Tools
